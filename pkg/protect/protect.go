@@ -25,7 +25,7 @@ var (
 )
 
 const (
-	maxInterval                   = 120 * time.Second
+	maxInterval                   = 60 * 60 * 24 * time.Second
 	minInterval                   = 0 * time.Second
 	defaultRestartProtectInterval = 120 * time.Second
 )
