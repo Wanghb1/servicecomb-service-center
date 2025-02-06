@@ -72,7 +72,22 @@ func RegisterInstance(ctx context.Context, in *pb.RegisterInstanceRequest) (*pb.
 	if popErr := populateInstanceDefaultValue(ctx, in.Instance); popErr != nil {
 		return nil, popErr
 	}
-	return datasource.GetMetadataManager().RegisterInstance(ctx, in)
+	resp, err := datasource.GetMetadataManager().RegisterInstance(ctx, in)
+	if err != nil {
+		log.Error(fmt.Sprintf("register instance failed, endpoints %v, host '%s', serviceID %s, operator %s",
+			in.Instance.Endpoints, in.Instance.HostName, in.Instance.ServiceId, remoteIP), err)
+		return nil, err
+	}
+	// re-register instance with id, should sync properties to peer
+	if len(in.Instance.InstanceId) != 0 {
+		in.Instance.Properties[reRegisterTimestamp] = time.Now().String()
+		err = PutInstanceProperties(ctx, &pb.UpdateInstancePropsRequest{
+			InstanceId: in.Instance.InstanceId,
+			ServiceId:  in.Instance.ServiceId,
+			Properties: in.Instance.Properties,
+		})
+	}
+	return resp, err
 }
 
 // instance util
