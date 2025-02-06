@@ -39,8 +39,9 @@ import (
 )
 
 const (
-	defaultMinInterval = 5 * time.Second
-	defaultMinTimes    = 3
+	defaultMinInterval  = 5 * time.Second
+	defaultMinTimes     = 3
+	reRegisterTimestamp = "reRegisterTimestamp"
 )
 
 var (
