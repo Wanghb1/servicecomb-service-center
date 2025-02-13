@@ -22,6 +22,9 @@ import (
 	"time"
 
 	beego "github.com/beego/beego/v2/server/web"
+
+	"github.com/apache/servicecomb-service-center/pkg/log"
+
 	"github.com/go-chassis/go-archaius"
 	"github.com/iancoleman/strcase"
 	"github.com/spf13/cast"
@@ -55,12 +58,16 @@ func GetString(key, def string, opts ...Option) string {
 func GetBool(key string, def bool, opts ...Option) bool {
 	options := newOptions(key, opts)
 	if archaius.Exist(options.ENV) {
+		log.Info("debug: 1, " + "env: " + options.ENV)
 		return archaius.GetBool(options.ENV, def)
 	}
 	if archaius.Exist(key) {
+		log.Info("debug: 2, " + "key: " + options.ENV)
 		return archaius.GetBool(key, def)
 	}
-	return beego.AppConfig.DefaultBool(options.Standby, def)
+	ret := beego.AppConfig.DefaultBool(options.Standby, def)
+	log.Info("beego : " + options.Standby)
+	return ret
 }
 
 // GetInt return the int type value by specified key
